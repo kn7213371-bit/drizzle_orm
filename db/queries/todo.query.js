@@ -1,4 +1,4 @@
-import { eq ,sql } from "drizzle-orm";
+import { eq ,ilike,sql , or } from "drizzle-orm";
 import { db } from "../db.js";
 import { todos } from "../schema.js";
 
@@ -43,4 +43,15 @@ export async function deleted(id) {
   const data = await db.delete(todos).where(eq(todos.id , Number(id))).returning();
 
   return data[0];
+}
+
+export async function searchTodo(search) {
+  const data = await db.select().from(todos).where(
+    or(
+      ilike(todos.title,`%${search}`),
+      ilike(todos.body,`%${search}`),
+    ) 
+  )
+
+  return data;
 }

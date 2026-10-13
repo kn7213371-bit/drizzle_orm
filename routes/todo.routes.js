@@ -1,5 +1,5 @@
 import express from "express";
-import { created, deleted, getAll, toggoDone, update } from "../db/queries/todo.query.js";
+import { created, deleted, getAll, searchTodo, toggoDone, update } from "../db/queries/todo.query.js";
 import { getById } from "../db/queries/todo.query.js";
 import { validateBody } from "../middleware/validationBody.js";
 import { todoInsert, todoUpdate } from "../schema/todo.schema.js";
@@ -9,6 +9,17 @@ export const todoRouter=express.Router();
 
 
 todoRouter.get("/",async (req,res)=>{
+    const search=req.query.search;
+
+    if(search){
+        const todoSearch=await searchTodo(search)
+        return res.status(200).json({
+            message :" success",
+            date:todoSearch
+        })
+    }
+    
+    
     const todos=await getAll();
 
     return res.status(200).json({
